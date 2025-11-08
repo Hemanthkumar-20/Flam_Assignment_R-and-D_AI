@@ -163,12 +163,7 @@ L1_{\text{mean}} = 25.243397
 
 The optimized parametric curve is given by:
 
-$x(t) = t\cos(0.490780889103)
-- e^{0.021395863861|t|}\sin(0.3t)\sin(0.490780889103)
-+ 54.898439840215$
-
-$y(t) = 42 + t\sin(0.490780889103)
-+ e^{0.021395863861|t|}\sin(0.3t)\cos(0.490780889103)$
+\left(t*\cos(0.826)-e^{0.0742\left|t\right|}\cdot\sin(0.3t)\sin(0.826)\ +11.5793,42+\ t*\sin(0.826)+e^{0.0742\left|t\right|}\cdot\sin(0.3t)\cos(0.826)\right)
 
 ---
 
