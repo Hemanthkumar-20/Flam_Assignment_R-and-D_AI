@@ -42,17 +42,17 @@ The model performance is evaluated using the **L1 distance** (sum of absolute de
 
 ---
 
-### 3. Mathematical Model
+### 3️. Mathematical Model
 
 For each $t_i$, we compute predicted values $\hat{x}_i$ and $\hat{y}_i$ as:
 
-\[
+$$
 \hat{x}_i = t_i \cos(\theta) - e^{M|t_i|}\sin(0.3t_i)\sin(\theta) + X,
-\]
+$$
 
-\[
-\hat{y}_i = 42 + t_i \sin(\theta) + e^{M|t_i|}\sin(0.3t_i)\cos(\theta)
-\]
+$$
+\hat{y}_i = 42 + t_i \sin(\theta) + e^{M|t_i|}\sin(0.3t_i)\cos(\theta).
+$$
 
 The goal is to find $\theta, M, X$ that minimize the difference between predicted and observed points.
 
@@ -60,48 +60,40 @@ The goal is to find $\theta, M, X$ that minimize the difference between predicte
 
 ### 4. L1 Cost Function (Loss)
 
-**Purpose:**  
-Implement the objective that the optimizer will minimize.
+**Code purpose:** implement the objective that the optimizer will minimize.
 
-**Mathematical Definition:**
-
-\[
+**L1 definition used**
+$
 L1_{sum}(\theta,M,X) = \sum_{i=1}^{1500} \big(|x_i^{pred}-x_i^{obs}| + |y_i^{pred}-y_i^{obs}|\big)
-\]
+\$
 
-**Implementation Details:**
-- The function checks bounds internally. If a parameter leaves the valid region, it returns a very large penalty.  
-  This enforces constraints even when using optimizers that ignore bounds.
-- The sum of absolute differences is used (not squared errors).  
-- For reporting, the mean L1 is also computed as $L1_{mean} = L1_{sum} / n$.
+**Implementation details**
+- The function checks bounds internally. If a parameter leaves the valid region, it returns a very large penalty. This enforces constraints even when using optimizers that ignore bounds.
+- We sum absolute differences across x and y. We return the scalar L1 sum (not normalized). For reporting we also compute mean L1 by dividing by `n`.
 
-**Why Choose L1:**
-- L1 is robust to outliers.
-- It directly corresponds to the **assignment scoring metric** (max score = 100).
+**Why choose L1 here:**
+- L1 is robust to outliers and is exactly the grading metric. Minimizing it directly typically yields the best score for the assignment.
 
 ---
 
 ### 5. Parameter Bounds
 
-**Purpose:**  
-Set the valid search domain for the optimizer.
+**Code purpose:** set the search domain for the optimizer.
 
-**Defined Bounds:**
-
-- $\theta \in (0^\circ, 50^\circ)$ — converted to radians in code:  
+- $\theta \in (0^\circ, 50^\circ)$ - we convert to radians for computation:  
   `(deg2rad(0.001), deg2rad(50))`
 - $M \in [-0.05, 0.05]$
 - $X \in [0, 100]$
 
-**Why Bounds Are Important:**
-- They constrain the search to physically and assignment-allowed ranges.
-- They accelerate convergence by reducing the optimization space.
-- They prevent unrealistic or numerically unstable parameter values.
+**Why bounds matter**
+- They constrain the search to physically/assignment-allowed values.
+- They speed optimization by reducing search volume.
+- They prevent the optimizer from wandering into unmeaningful parameter zones that could produce numerical or modeling artefacts.
 
-**Practical Note:**  
-Two types of bound enforcement are used:
-1. A `bounds` structure for optimizers that support bounded search (e.g., Differential Evolution).  
-2. An internal penalty in `l1_cost` for invalid values — ensures consistent constraint handling across methods.
+**Practical note:**  
+We maintain both:
+1. A `bounds` structure for optimizers that support bounds (like Differential Evolution), and  
+2. An internal check inside `l1_cost` to return a large penalty if the parameters violate bounds - this ensures consistent constraint handling across all optimization methods.
 
 ---
 
@@ -132,14 +124,60 @@ Differential Evolution provides a solid starting point for local refinement.
 
 ### 7. Optimization - Local Refinement (Powell)
 
-**Purpose:**  
-Refine the solution obtained from DE for better precision.
+**Code purpose:** refine the DE candidate to reduce L1 further.
 
-**Why Powell’s Method?**
-- Works well for non-smooth, derivative-free functions (like L1).  
-- Efficiently refines results obtained from global optimizers.  
+**Why a local method next?**
+- DE is good for global exploration but not for high-precision local convergence.
+- Powell’s method (derivative-free line-search) is robust with non-smooth objectives like L1: it refines the solution without needing derivatives.
 
-**Implementation Notes:**
-- Run after DE using:
-  ```python
-  res_local = minimize(l1_cost, res_de.x, method='Powell')
+**Implementation notes**
+- We call `scipy.optimize.minimize(..., method='Powell')` starting from `res_de.x`.
+- Some local solvers accept bounds directly; Powell does not strictly enforce bounds in SciPy, so our `l1_cost` checks bounds and returns a large penalty if a candidate violates them.
+- After local refinement, `res_local.x` is the final parameter vector and `res_local.fun` is the L1 at that point.
+
+**Why this two-step strategy is effective**
+- Global search finds a good region; local refinement squeezes the final percentage points from the objective, giving a better L1 for grading.
+
+### 8. Final Best-Fit Parameters
+
+After running Differential Evolution (global) followed by Powell (local) optimization  
+with constraints $-0.05 < M < 0.05$, the best-fit parameters obtained are:
+
+| Parameter | Symbol | Value | Unit |
+|------------|---------|--------|------|
+| Theta (radians) | $\theta$ | **0.490780889103** | rad |
+| Theta (degrees) | $\theta$ | **28.119674** | ° |
+| Exponential rate | $M$ | **0.021395863861** | — |
+| Horizontal shift | $X$ | **54.898439840215** | — |
+
+**L1 metrics:**
+
+\$[
+L1_{\text{sum}} = 37865.095792, \qquad
+L1_{\text{mean}} = 25.243397
+\]$
+
+---
+
+#### Final Fitted Parametric Equation
+
+The optimized parametric curve is given by:
+
+\
+\begin{aligned}
+x(t) &= t\cos(0.490780889103)
+- e^{0.021395863861|t|}\sin(0.3t)\sin(0.490780889103)
++ 54.898439840215, \\[6pt]
+y(t) &= 42 + t\sin(0.490780889103)
++ e^{0.021395863861|t|}\sin(0.3t)\cos(0.490780889103)
+\end{aligned}
+
+---
+
+#### Notes
+
+- $\theta = 28.119674^\circ$ controls the **rotation/tilt** of the curve.  
+- $M = 0.021395863861$ defines the **exponential scaling** of oscillations with $|t|$.  
+- $X = 54.898439840215$ gives the **horizontal offset**.  
+- The **L1 metric** (sum of absolute deviations) quantifies total fitting error between predicted and observed points smaller is better.
+
