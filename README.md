@@ -138,6 +138,8 @@ Differential Evolution provides a solid starting point for local refinement.
 **Why this two-step strategy is effective**
 - Global search finds a good region; local refinement squeezes the final percentage points from the objective, giving a better L1 for grading.
 
+---
+
 ### 8. Final Best-Fit Parameters
 
 After running Differential Evolution (global) followed by Powell (local) optimization  
