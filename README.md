@@ -146,7 +146,7 @@ with constraints $-0.05 < M < 0.05$, the best-fit parameters obtained are:
 | Parameter | Symbol | Value | Unit |
 |------------|---------|--------|------|
 | Theta (radians) | $\theta$ | **0.490780889103** | rad |
-| Theta (degrees) | $\theta$ | **28.119674** | ° |
+| Theta (degrees) | $\theta$ | **28.119674** | deg |
 | Exponential rate | $M$ | **0.021395863861** | — |
 | Horizontal shift | $X$ | **54.898439840215** | — |
 
@@ -161,9 +161,8 @@ L1_{\text{mean}} = 25.243397
 
 #### Final Fitted Parametric Equation
 
-The optimized parametric curve is given by:
-
-\left(t*\cos(0.826)-e^{0.0742\left|t\right|}\cdot\sin(0.3t)\sin(0.826)\ +11.5793,42+\ t*\sin(0.826)+e^{0.0742\left|t\right|}\cdot\sin(0.3t)\cos(0.826)\right)
+**View the parametric curve live on Desmos:**  
+[**Desmos Parametric Graph Link**](https://www.desmos.com/calculator/cdqgwtaxfc)
 
 ---
 
