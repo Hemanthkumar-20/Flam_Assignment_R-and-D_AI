@@ -6,21 +6,23 @@
 
 We are given **1500 points** $(x_i, y_i)$ that lie on a **parametric curve** defined as:
 
-\[
+$$
 x(t) = t \cos(\theta) - e^{M|t|} \sin(0.3t) \sin(\theta) + X,
-\]
+$$
 
-\[
+$$
 y(t) = 42 + t \sin(\theta) + e^{M|t|} \sin(0.3t) \cos(\theta)
-\]
+$$
 
-with unknown constants **$(\theta, M, X)$**.
+with unknown constants **$(\theta, M, X)$**
+.
 
 The given parameter ranges are:
 
-\[
+$$
 0^\circ < \theta < 50^\circ, \quad -0.05 < M < 0.05, \quad 0 < X < 100, \quad 6 < t < 60.
-\]
+$$
+
 
 **Goal:**  
 Estimate the parameters $(\theta, M, X)$ such that the model curve matches the given dataset $(x, y)$.  
