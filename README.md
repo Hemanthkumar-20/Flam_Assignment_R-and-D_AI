@@ -63,9 +63,9 @@ The goal is to find $\theta, M, X$ that minimize the difference between predicte
 **Code purpose:** implement the objective that the optimizer will minimize.
 
 **L1 definition used**
-$
-L1_{sum}(\theta,M,X) = \sum_{i=1}^{1500} \big(|x_i^{pred}-x_i^{obs}| + |y_i^{pred}-y_i^{obs}|\big)
-\$
+\$[
+L1_{sum}(\theta, M, X) = \sum_{i=1}^{1500} \left( |x_i^{pred} - x_i^{obs}| + |y_i^{pred} - y_i^{obs}| \right)
+\]$
 
 **Implementation details**
 - The function checks bounds internally. If a parameter leaves the valid region, it returns a very large penalty. This enforces constraints even when using optimizers that ignore bounds.
@@ -162,6 +162,14 @@ L1_{\text{mean}} = 25.243397
 ---
 
 #### Final Fitted Parametric Equation
+
+$$
+x(t) = t \cos(0.490780889103) - e^{0.021395863861|t|} \sin(0.3t)\sin(0.490780889103)+54.898439840215
+$$
+
+$$
+y(t) = 42 + t \sin(0.490780889103)+ e^{0.021395863861|t|} \sin(0.3t) \cos(0.490780889103)
+$$
 
 **View the parametric curve live on Desmos:**  
 [**Desmos Parametric Graph Link**](https://www.desmos.com/calculator/cdqgwtaxfc)
